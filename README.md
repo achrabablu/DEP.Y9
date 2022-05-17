@@ -1,7 +1,7 @@
 # DEP.Y9
 Purchase management
 
-![Design preview for the Indent for Purchase page coding challenge](./app/static/Dashbord.png)
+![Design preview for the Indent for Purchase page coding challenge](./Dashbord.png)
 
 ## Overview
 
