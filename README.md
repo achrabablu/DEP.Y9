@@ -2,6 +2,18 @@
 Purchase management
 
 ![Design preview for the Indent for Purchase page coding challenge](./Dashbord.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-21-52.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-26-57.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-26-57.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-27-20.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-29-18.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-34-18.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-38-29.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-39-25.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-50-41.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-54-17.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-16_00-00-23.png)
+![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-16_00-01-47.png)
 
 ## Overview
 
