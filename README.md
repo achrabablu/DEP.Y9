@@ -4,7 +4,7 @@ Purchase management
 
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-21-52.png)
 This function manages the Authentication part
-
+'''
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():     
@@ -45,8 +45,9 @@ def login():
         except:    
             msg = 'Incorrect username / password !'
     return render_template('login.html',msg=msg)
-
+'''
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-26-57.png)
+'''
 @app.route('/myapplications/<username>')
 def myapplications(username):                       # Function shows Indenter Application
     if(not session.get('login_check')):             # If Else condtion are used for gettong conditions
@@ -91,7 +92,7 @@ def myapplications(username):                       # Function shows Indenter Ap
             mydic.append(mydic1)
             j=j+1
     return render_template("IndenterDashboard.html", parent_list=mydic,user=username,dic=dic) 
-
+'''
 
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-26-57.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-27-20.png)
