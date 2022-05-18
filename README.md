@@ -2,18 +2,165 @@
 Purchase management
 
 
-
-![Design preview for the Indent for Purchase page coding challenge](./Dashbord.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-21-52.png)
+This function manages the Authentication part
+
+@app.route('/')
+@app.route('/login', methods=['GET', 'POST'])
+def login():     
+
+    msg = ''
+    
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        
+        username = request.form['username']
+        password = request.form['password']
+
+        fusername=sheet_instance.find(username)
+        fpass=sheet_instance.find(password)
+        z=[]
+        try:
+            print(fusername,fpass)
+            loc='E'+str(fpass.row)
+            z.append(int(sheet_instance.acell(loc).value))
+            print(fpass.row,fpass.col + 1,z)
+            if fusername.row==fpass.row and fusername.col!=fpass.col:
+                # print(x[0], y[0], z[0])
+                session['loggedin'] = True
+                session['username'] =fusername.value
+                session['login_check']=True
+                msg = 'Logged in successfully !'
+                if (z[0]==0):
+                    return redirect(url_for('myapplications',username=session['username']))
+                elif (z[0]==1):
+                    return redirect(url_for('approversP1',username=session['username']))
+                elif (z[0]==2):
+                    return redirect(url_for('approversP2',username=session['username']))
+                elif (z[0]==3):
+                    return redirect(url_for('approversP3',username=session['username']))                
+                elif (z[0]==4):
+                    return redirect(url_for('approversP4',username=session['username']))
+            else:
+                msg = 'Incorrect username / password !'
+        except:    
+            msg = 'Incorrect username / password !'
+    return render_template('login.html',msg=msg)
+
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-26-57.png)
+@app.route('/myapplications/<username>')
+def myapplications(username):                       # Function shows Indenter Application
+    if(not session.get('login_check')):             # If Else condtion are used for gettong conditions
+        return redirect(url_for('login'))           # dic dictionary stores the profile data
+    fusername=sheet_instance.find(username)
+    dic={}                                          
+    dic['username']=sheet_instance.acell('B'+str(fusername.row)).value
+    dic['id']=sheet_instance.acell('A'+str(fusername.row)).value
+    dic['password']=sheet_instance.acell('C'+str(fusername.row)).value
+    dic['email']=sheet_instance.acell('D'+str(fusername.row)).value
+    L=int(sheet_instance.acell('E'+str(fusername.row)).value)
+    dic['level']='INDENTER'
+    todo = db.child("form").get()
+    jsondata = todo.val()
+    mydic = []                                      # Stores data of all application at one place, is a 2D matrix
+    j = 1
+    for i in jsondata.items():
+        mydic1=[]                                       # Stores data of individual, is a 1D matrix
+        # print(i[1]['user'])
+        if(i[1]["user"]==username):
+            mydic1.append(j)
+            mydic1.append(i[0])
+            mydic1.append(i[1]["date"])
+            if(i[1]["statusA1"]=="false" and i[1]["statusR1"]=="false"):
+                mydic1.append("Pending by supredent")
+            elif(i[1]["statusR1"]=="true"):
+                mydic1.append("Rejected by supredent")
+            elif(i[1]["statusR2"]=="false" and i[1]["statusA2"]=="false"):
+                mydic1.append("Pending by AR/DR/JR")
+            elif(i[1]["statusR2"]=="true"):
+                mydic1.append("Rejected by AR/DR/JR")
+            elif(i[1]["statusR3"]=="false" and i[1]["statusA3"]=="false"):
+                mydic1.append("Pending by registar")
+            elif(i[1]["statusR3"]=="true"):
+                mydic1.append("Rejected by registar")
+            elif(i[1]["statusR4"]=="false" and i[1]["statusA4"]=="false"):
+                mydic1.append("Pending by HOD")
+            elif(i[1]["statusR4"]=="true"):
+                mydic1.append("Rejected by HOD")
+            elif(i[1]["statusR4"]=="false" and i[1]["statusA4"]=="true"):
+                mydic1.append("Your Application is approved")
+            mydic.append(mydic1)
+            j=j+1
+    return render_template("IndenterDashboard.html", parent_list=mydic,user=username,dic=dic) 
+
+
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-26-57.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-27-20.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-29-18.png)
+ # Allows the indenter to view the application
+@app.route('/preview/<appId>')                                     
+def applicationReview(appId):
+    if(not session['loggedin']):
+        return redirect(url_for('login'))
+    todo = db.child("form").child(appId).get()
+    return render_template("previewin.html", dict_item=todo.val())    
+    
+    
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-34-18.png)
+# Supretendent Dashboard 
+@app.route('/approversP1/<username>')
+def approversP1(username):                          # Approver P1, P2, P3, and P4 are routes for displaying all the information about Respective approvers.
+    if(not session.get('login_check')):             # checking if user logged-in or not
+        return redirect(url_for('login'))
+    try:
+        todo = db.child("form").get()
+        jsondata = todo.val()
+        mydic = []                                  # Stores pending applications, 
+        j = 1
+        for i in jsondata.items():
+            mydic1=[]
+            if(i[1]["statusA1"]=="false" and i[1]["statusR1"]=="false"):
+                mydic1.append(j)
+                mydic1.append(i[0])
+                mydic1.append(i[1]["date"])
+                mydic.append(mydic1)
+                j=j+1
+        mydic01 = []                                # stores approved applications
+        j = 1
+        for i in jsondata.items():
+            mydic1=[]
+            if(i[1]["statusA1"]=="true"):
+                mydic1.append(j)
+                mydic1.append(i[0])
+                mydic1.append(i[1]["date"])
+                mydic01.append(mydic1)
+                j=j+1
+        mydic02 = []                                # Stores Rejected applications
+        j = 1                                       
+        for i in jsondata.items():
+            mydic1=[]
+            if(i[1]["statusR1"]=="true"):
+                mydic1.append(j)
+                mydic1.append(i[0])
+                mydic1.append(i[1]["date"])
+                mydic02.append(mydic1)
+                j=j+1
+    except:
+        pass
+    return render_template("SupdtDashboard.html", parent_list=mydic,user=username,parent_list01=mydic01,parent_list02=mydic02  )
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-38-29.png)
+# This function manages the to apply new application
+@app.route('/form')
+def form():                                                
+    if(not session['loggedin']):
+        return redirect(url_for('login'))
+    return render_template('form.html')
+    
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-39-25.png)
-![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-50-41.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-54-17.png)
+@app.route('/forgotpassword',methods=['GET','POST'])
+def forgotpassword():                                   # Function manages the forget password page
+    return render_template('forgotpassword.html')
+    
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-16_00-00-23.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-16_00-01-47.png)
 
@@ -70,91 +217,8 @@ db = firebase.database()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-@app.route('/myapplications/<username>')
-def myapplications(username):                       # Function shows Indenter Application
-    if(not session.get('login_check')):             # If Else condtion are used for gettong conditions
-        return redirect(url_for('login'))           # dic dictionary stores the profile data
-    fusername=sheet_instance.find(username)
-    dic={}                                          
-    dic['username']=sheet_instance.acell('B'+str(fusername.row)).value
-    dic['id']=sheet_instance.acell('A'+str(fusername.row)).value
-    dic['password']=sheet_instance.acell('C'+str(fusername.row)).value
-    dic['email']=sheet_instance.acell('D'+str(fusername.row)).value
-    L=int(sheet_instance.acell('E'+str(fusername.row)).value)
-    dic['level']='INDENTER'
-    todo = db.child("form").get()
-    jsondata = todo.val()
-    mydic = []                                      # Stores data of all application at one place, is a 2D matrix
-    j = 1
-    for i in jsondata.items():
-        mydic1=[]                                       # Stores data of individual, is a 1D matrix
-        # print(i[1]['user'])
-        if(i[1]["user"]==username):
-            mydic1.append(j)
-            mydic1.append(i[0])
-            mydic1.append(i[1]["date"])
-            if(i[1]["statusA1"]=="false" and i[1]["statusR1"]=="false"):
-                mydic1.append("Pending by supredent")
-            elif(i[1]["statusR1"]=="true"):
-                mydic1.append("Rejected by supredent")
-            elif(i[1]["statusR2"]=="false" and i[1]["statusA2"]=="false"):
-                mydic1.append("Pending by AR/DR/JR")
-            elif(i[1]["statusR2"]=="true"):
-                mydic1.append("Rejected by AR/DR/JR")
-            elif(i[1]["statusR3"]=="false" and i[1]["statusA3"]=="false"):
-                mydic1.append("Pending by registar")
-            elif(i[1]["statusR3"]=="true"):
-                mydic1.append("Rejected by registar")
-            elif(i[1]["statusR4"]=="false" and i[1]["statusA4"]=="false"):
-                mydic1.append("Pending by HOD")
-            elif(i[1]["statusR4"]=="true"):
-                mydic1.append("Rejected by HOD")
-            elif(i[1]["statusR4"]=="false" and i[1]["statusA4"]=="true"):
-                mydic1.append("Your Application is approved")
-            mydic.append(mydic1)
-            j=j+1
-    return render_template("IndenterDashboard.html", parent_list=mydic,user=username,dic=dic) 
 
-@app.route('/approversP1/<username>')
-def approversP1(username):                          # Approver P1, P2, P3, and P4 are routes for displaying all the information about Respective approvers.
-    if(not session.get('login_check')):             # checking if user logged-in or not
-        return redirect(url_for('login'))
-    try:
-        todo = db.child("form").get()
-        jsondata = todo.val()
-        mydic = []                                  # Stores pending applications, 
-        j = 1
-        for i in jsondata.items():
-            mydic1=[]
-            if(i[1]["statusA1"]=="false" and i[1]["statusR1"]=="false"):
-                mydic1.append(j)
-                mydic1.append(i[0])
-                mydic1.append(i[1]["date"])
-                mydic.append(mydic1)
-                j=j+1
-        mydic01 = []                                # stores approved applications
-        j = 1
-        for i in jsondata.items():
-            mydic1=[]
-            if(i[1]["statusA1"]=="true"):
-                mydic1.append(j)
-                mydic1.append(i[0])
-                mydic1.append(i[1]["date"])
-                mydic01.append(mydic1)
-                j=j+1
-        mydic02 = []                                # Stores Rejected applications
-        j = 1                                       
-        for i in jsondata.items():
-            mydic1=[]
-            if(i[1]["statusR1"]=="true"):
-                mydic1.append(j)
-                mydic1.append(i[0])
-                mydic1.append(i[1]["date"])
-                mydic02.append(mydic1)
-                j=j+1
-    except:
-        pass
-    return render_template("SupdtDashboard.html", parent_list=mydic,user=username,parent_list01=mydic01,parent_list02=mydic02  )
+
 @app.route('/approversP2/<username>')
 def approversP2(username):
     if(not session.get('login_check')):             # checking if user logged-in or not
@@ -366,12 +430,7 @@ def approver4Action(appId):
         db.child("form").child(appId).update({"statusR4": "true"})
     return redirect(url_for('approversP4',username=session['username']))
 
-@app.route('/preview/<appId>')                                      # Allows the indenter to view the application
-def applicationReview(appId):
-    if(not session['loggedin']):
-        return redirect(url_for('login'))
-    todo = db.child("form").child(appId).get()
-    return render_template("previewin.html", dict_item=todo.val())
+
 
 @app.route('/search/<int:id>',methods=['POST','GET'])               # Provides facility to search the application by application id
 def applicationSearch(id):
@@ -410,50 +469,8 @@ def applicationDelete(appId):                                   # Allows indente
     todo = db.child("form").child(appId).remove()
     return redirect(url_for('myapplications',username=session['username']))
 
-@app.route('/')
-@app.route('/login', methods=['GET', 'POST'])                   # This function manages the Authentication part
-def login(): 
-    msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        username = request.form['username']
-        password = request.form['password']
-
-        fusername=sheet_instance.find(username)
-        fpass=sheet_instance.find(password)
-        z=[]
-        try:
-            print(fusername,fpass)
-            loc='E'+str(fpass.row)
-            z.append(int(sheet_instance.acell(loc).value))
-            print(fpass.row,fpass.col + 1,z)
-            if fusername.row==fpass.row and fusername.col!=fpass.col:
-                # print(x[0], y[0], z[0])
-                session['loggedin'] = True
-                session['username'] =fusername.value
-                session['login_check']=True
-                msg = 'Logged in successfully !'
-                if (z[0]==0):
-                    return redirect(url_for('myapplications',username=session['username']))
-                elif (z[0]==1):
-                    return redirect(url_for('approversP1',username=session['username']))
-                elif (z[0]==2):
-                    return redirect(url_for('approversP2',username=session['username']))
-                elif (z[0]==3):
-                    return redirect(url_for('approversP3',username=session['username']))                
-                elif (z[0]==4):
-                    return redirect(url_for('approversP4',username=session['username']))
-            else:
-                msg = 'Incorrect username / password !'
-        except:    
-            msg = 'Incorrect username / password !'
-    return render_template('login.html',msg=msg)
 
 
-@app.route('/form')
-def form():                                                 # This function manages the to apply new application
-    if(not session['loggedin']):
-        return redirect(url_for('login'))
-    return render_template('form.html')
 
 @app.route('/success/<dic>')
 def success(dic):                                           # Manages to view the form
@@ -529,10 +546,6 @@ def register():
     elif request.method == 'POST':
         msg = 'Please fill out the form !'
     return render_template('register.html', msg=msg)
-
-@app.route('/forgotpassword',methods=['GET','POST'])
-def forgotpassword():                                   # Function manages the forget password page
-    return render_template('forgotpassword.html')
 
 
 
