@@ -4,7 +4,7 @@ Purchase management
 
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-21-52.png)
 This function manages the Authentication part
-'''
+```
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():     
@@ -45,9 +45,9 @@ def login():
         except:    
             msg = 'Incorrect username / password !'
     return render_template('login.html',msg=msg)
-'''
+```
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-26-57.png)
-'''
+```
 @app.route('/myapplications/<username>')
 def myapplications(username):                       # Function shows Indenter Application
     if(not session.get('login_check')):             # If Else condtion are used for gettong conditions
@@ -92,22 +92,25 @@ def myapplications(username):                       # Function shows Indenter Ap
             mydic.append(mydic1)
             j=j+1
     return render_template("IndenterDashboard.html", parent_list=mydic,user=username,dic=dic) 
-'''
+```
 
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-26-57.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-27-20.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-29-18.png)
- # Allows the indenter to view the application
+ 
+# Allows the indenter to view the application
+```
 @app.route('/preview/<appId>')                                     
 def applicationReview(appId):
     if(not session['loggedin']):
         return redirect(url_for('login'))
     todo = db.child("form").child(appId).get()
     return render_template("previewin.html", dict_item=todo.val())    
-    
+```    
     
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-34-18.png)
 # Supretendent Dashboard 
+```
 @app.route('/approversP1/<username>')
 def approversP1(username):                          # Approver P1, P2, P3, and P4 are routes for displaying all the information about Respective approvers.
     if(not session.get('login_check')):             # checking if user logged-in or not
@@ -148,25 +151,30 @@ def approversP1(username):                          # Approver P1, P2, P3, and P
     except:
         pass
     return render_template("SupdtDashboard.html", parent_list=mydic,user=username,parent_list01=mydic01,parent_list02=mydic02  )
+```
+
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-38-29.png)
 # This function manages the to apply new application
+```
 @app.route('/form')
 def form():                                                
     if(not session['loggedin']):
         return redirect(url_for('login'))
     return render_template('form.html')
-    
+```
+
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-39-25.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-54-17.png)
+```
 @app.route('/forgotpassword',methods=['GET','POST'])
 def forgotpassword():                                   # Function manages the forget password page
     return render_template('forgotpassword.html')
-    
+```    
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-16_00-00-23.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-16_00-01-47.png)
 
 
-
+```
 from optparse import Values
 import re
 from flask import Flask, render_template, request, redirect, url_for, session, Response
@@ -675,7 +683,7 @@ def basic(username):
 if __name__ == '__main__':                          # This is a Driver code. 
     
     app.run(debug=True)
-
+```
 
 ## Overview
 
