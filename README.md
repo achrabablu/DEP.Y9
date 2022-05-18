@@ -96,6 +96,102 @@ def myapplications(username):                       # Function shows Indenter Ap
 
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-26-57.png)
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-27-20.png)
+```
+{%extends 'Indenter-base-layout.html'%}
+
+{% block indentorApplicationPage %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-0"></div>
+        <div class="col-md-12" id="sectionApplicationPageGrid">
+            <div class="row">
+                {% for dict_item in parent_list %}
+                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 mt-3 pt-3 indenter-application-box">
+                    <div class="card mb-1 content">
+                        <h6 class="m-3 pt-3"><span style="color:blue;">ID: </span>{{dict_item[1]}}</h6>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h6><span style="color: blue;">Date: </span>{{dict_item[2]}}</h6>
+                                    <h6><span style="color: blue;">Status: </span>{{dict_item[3]}}</h6>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a href="/preview/{{dict_item[1]}}"><button class="btn btn-primary">View</button></a>
+                                    <a href="/delete/{{dict_item[1]}}"><button class="btn btn-primary">Drop</button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-12" id="sectionApplicationPageList" style="display: none; background-color: lightblue;">
+            <div class="List-View-box mt-3 pt-3" style="background-color: lightblue;">
+                <h5>Application Id</h5>
+                <h5>Application Status</h5>
+                <h5>Date</h5>
+                <h5>View</h5>
+                <h5>Drop</h5>
+            </div>
+            {% for dict_item in parent_list %}
+            <div class="List-View-box m-3 pt-3">
+                <h6>{{dict_item[1]}}</h6>
+                <h6>{{dict_item[3]}}</h6>
+                <h6>{{dict_item[2]}}</h6>
+                <a href="/preview/{{dict_item[1]}}"><button class="btn btn-primary">View</button></a>
+                <a href="/delete/{{dict_item[1]}}"><button class="btn btn-primary">Drop</button></a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="mb-3"></div>
+</div>
+
+<div class="profile bg-light text-black-50 pt-3" style="display: none;" id="profilePage">
+
+    <div class="container" style="border-style: solid; box-shadow: rgb(56, 56, 191);">
+        <header>
+            <h1 class="text-center">{{dic['level']}}</h1>
+        </header>
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-7">
+                <div class="row">
+                    <div class="col-6">
+                        <h4>Name</h4>
+                        <h4>Email</h4>
+                        <h4>ID</h4>
+                        <h4>Institute</h4>
+                    </div>
+                    <div class="col-6">
+                        <h4>{{dic['username']}}</h4>
+                        <h4>{{dic['email']}}</h4>
+                        <h4>{{dic['id']}}</h4>
+                        <h4>Indian Institute of Technology, Ropar</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock indentorApplicationPage %}
+
+
+
+{% block newApplicationButton %}
+    <a href="/form" ><button class="box stack-top rounded-circle tooltip">
+        <img src="https://as2.ftcdn.net/v2/jpg/00/70/16/29/1000_F_70162903_5mFpUbO3ZfRyD4gslH8j2c5VxjGMKU9G.jpg" class="rounded-circle plus-image" align="center">
+        <span class="tooltiptext">New</span>
+        </button>
+    </a>
+{% endblock newApplicationButton %}
+```
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-29-18.png)
  
 # Allows the indenter to view the application
