@@ -3,7 +3,7 @@ Purchase management
 
 
 ![Design preview for the Indent for Purchase page coding challenge](./image_2022-05-15_23-21-52.png)
-This function manages the Authentication part
+# This function manages the Authentication part
 ```
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
